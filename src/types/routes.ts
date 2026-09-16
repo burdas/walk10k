@@ -7,10 +7,13 @@ export interface GeocodeRequest {
   address: string;
 }
 
-export interface GeocodeResponse {
+export interface GeocodeSuggestion {
+  id: string;
   lat: number;
   lon: number;
-  displayName: string;
+  label: string;
+  primary: string;
+  secondary: string;
 }
 
 export interface RoutesRequest {

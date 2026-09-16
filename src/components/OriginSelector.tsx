@@ -1,84 +1,126 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import {
+  Autocomplete,
+  AutocompleteInput,
+  AutocompletePortal,
+  AutocompletePositioner,
+  AutocompletePopup,
+  AutocompleteList,
+  AutocompleteItem,
+  AutocompleteEmpty,
+  AutocompleteStatus,
+} from '@/components/ui/autocomplete';
+import { useEffect, useRef, useState } from 'react';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import type { GeocodeSuggestion } from '../types/routes';
 
 interface Props {
   onLocation: (lat: number, lon: number, label?: string) => void;
-  onError: (msg: string) => void;
 }
 
-export default function OriginSelector({ onLocation, onError }: Props) {
-  const [mode, setMode] = useState<'idle' | 'gps' | 'address'>('idle');
-  const [address, setAddress] = useState('');
-  const [loading, setLoading] = useState(false);
+const MIN_QUERY_LENGTH = 3;
 
-  function useGeolocation() {
-    setMode('gps');
-    if (!navigator.geolocation) {
-      onError('Tu navegador no soporta geolocalización');
+export default function OriginSelector({ onLocation }: Props) {
+  const [address, setAddress] = useState('');
+  const [suggestions, setSuggestions] = useState<GeocodeSuggestion[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const debouncedAddress = useDebouncedValue(address, 350);
+  const selectedLabelRef = useRef<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    const query = debouncedAddress.trim();
+
+    if (selectedLabelRef.current !== null && debouncedAddress === selectedLabelRef.current) {
+      selectedLabelRef.current = null;
       return;
     }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        onLocation(pos.coords.latitude, pos.coords.longitude, 'Tu ubicación actual');
-      },
-      () => {
-        onError('No se pudo obtener tu ubicación. Permite el acceso a la ubicación.');
-        setMode('idle');
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  }
 
-  async function searchAddress() {
-    if (!address.trim()) return;
-    setLoading(true);
-    try {
-      const res = await fetch('/api/geocode', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: address.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        onError(data.error || 'Dirección no encontrada');
-        return;
-      }
-      onLocation(data.lat, data.lon, data.displayName);
-    } catch {
-      onError('Error al buscar la dirección');
-    } finally {
-      setLoading(false);
+    if (query.length < MIN_QUERY_LENGTH) {
+      abortRef.current?.abort();
+      setSuggestions([]);
+      setSearching(false);
+      setOpen(false);
+      return;
     }
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setSearching(true);
+    setOpen(true);
+
+    fetch(`/api/geocode?q=${encodeURIComponent(query)}`, { signal: controller.signal })
+      .then((res) => res.json() as Promise<{ suggestions?: GeocodeSuggestion[] }>)
+      .then((data) => {
+        if (controller.signal.aborted) return;
+        setSuggestions(data.suggestions ?? []);
+      })
+      .catch((err: unknown) => {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
+        if (controller.signal.aborted) return;
+        setSuggestions([]);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setSearching(false);
+      });
+
+    return () => controller.abort();
+  }, [debouncedAddress]);
+
+  function handleSelect(item: GeocodeSuggestion) {
+    selectedLabelRef.current = item.label;
+    setAddress(item.label);
+    setSuggestions([]);
+    setOpen(false);
+    onLocation(item.lat, item.lon, item.label);
   }
 
   return (
     <div className="flex flex-col items-center gap-3 w-full">
-      <span className="text-xs text-gray-500">Punto de inicio</span>
-      <Button
-        variant="outline"
-        onClick={useGeolocation}
-        disabled={mode === 'gps'}
-        className="w-full"
-      >
-        {mode === 'gps' ? 'Obteniendo ubicación...' : '📍 Usar mi ubicación'}
-      </Button>
-      <span className="text-xs text-gray-400">o</span>
-      <div className="flex flex-col items-center gap-2 w-full">
-        <Input
+      <div className="w-full">
+        <Autocomplete
+          items={suggestions}
+          filter={null}
           value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && searchAddress()}
-          placeholder="Calle Mayor 15, Peralta"
-        />
-        <Button
-          variant="outline"
-          onClick={searchAddress}
-          disabled={loading || !address.trim()}
-          className="w-full"
+          onValueChange={(value) => setAddress(value)}
+          itemToStringValue={(item) => item.label}
+          open={open}
+          onOpenChange={setOpen}
+          autoHighlight
         >
-          {loading ? 'Buscando...' : 'Buscar dirección'}
-        </Button>
+          <AutocompleteInput placeholder="Calle Mayor 15, Peralta" />
+          <AutocompletePortal>
+            <AutocompletePositioner>
+              <AutocompletePopup>
+                <AutocompleteList>
+                  {(item: GeocodeSuggestion) => (
+                    <AutocompleteItem
+                      key={item.id}
+                      value={item}
+                      onClick={() => handleSelect(item)}
+                    >
+                      <span className="font-medium">{item.primary}</span>
+                      {item.secondary && (
+                        <span className="text-xs text-muted-foreground">{item.secondary}</span>
+                      )}
+                    </AutocompleteItem>
+                  )}
+                </AutocompleteList>
+                {searching && (
+                  <AutocompleteStatus>Buscando direcciones…</AutocompleteStatus>
+                )}
+                {!searching && suggestions.length === 0 && (
+                  <AutocompleteEmpty>Sin resultados</AutocompleteEmpty>
+                )}
+                <div className="border-t border-border px-3 py-1.5 text-[10px] leading-tight text-muted-foreground">
+                  Datos: CartoCiudad (IGN) · OpenStreetMap
+                </div>
+              </AutocompletePopup>
+            </AutocompletePositioner>
+          </AutocompletePortal>
+        </Autocomplete>
       </div>
     </div>
   );

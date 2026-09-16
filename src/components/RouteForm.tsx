@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import StepSelector from './StepSelector';
 import OriginSelector from './OriginSelector';
 import type { Coordinates } from '../types/routes';
@@ -9,12 +8,12 @@ import { STEP_LENGTH_DEFAULT } from '../lib/constants';
 interface Props {
   onSubmit: (origin: Coordinates, steps: number, stepLength: number) => void;
   onError: (msg: string) => void;
+  onOriginPreview: (origin: Coordinates | null) => void;
 }
 
-export default function RouteForm({ onSubmit, onError }: Props) {
+export default function RouteForm({ onSubmit, onError, onOriginPreview }: Props) {
   const [steps, setSteps] = useState(10000);
   const [origin, setOrigin] = useState<Coordinates | null>(null);
-  const [originLabel, setOriginLabel] = useState<string>('');
 
   function handleSubmit() {
     if (!origin) {
@@ -29,15 +28,12 @@ export default function RouteForm({ onSubmit, onError }: Props) {
       <h1 className="text-3xl font-bold tracking-tight">Walk10K</h1>
       <StepSelector value={steps} onChange={setSteps} />
       <OriginSelector
-        onLocation={(lat, lon, label) => {
-          setOrigin({ lat, lon });
-          setOriginLabel(label || '');
+        onLocation={(lat, lon) => {
+          const nextOrigin = { lat, lon };
+          setOrigin(nextOrigin);
+          onOriginPreview(nextOrigin);
         }}
-        onError={onError}
       />
-      {originLabel && (
-        <p className="text-xs text-gray-400 max-w-full text-center truncate">{originLabel}</p>
-      )}
       <Button
         onClick={handleSubmit}
         disabled={!origin}

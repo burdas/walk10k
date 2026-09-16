@@ -6,9 +6,12 @@ import type { Coordinates, RouteResult } from '../types/routes';
 
 type AppState = 'form' | 'loading' | 'results' | 'error';
 
+const EMPTY_GEOMETRY: Coordinates[] = [];
+
 export default function App() {
   const [state, setState] = useState<AppState>('form');
   const [origin, setOrigin] = useState<Coordinates | null>(null);
+  const [previewOrigin, setPreviewOrigin] = useState<Coordinates | null>(null);
   const [routes, setRoutes] = useState<RouteResult[]>([]);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
@@ -58,7 +61,7 @@ export default function App() {
     setErrorMsg('');
   }, []);
 
-  const mapCenter = origin ?? { lat: 42.3569, lon: -1.7995 };
+  const mapOrigin = origin ?? previewOrigin;
   const showMap = state === 'results' && origin && routes.length > 0;
 
   return (
@@ -66,8 +69,8 @@ export default function App() {
       {/* Mapa siempre visible */}
       <div className="absolute inset-0 z-0">
         <RouteMap
-          origin={mapCenter}
-          routeGeometry={showMap ? routes[selectedIdx].geometry : []}
+          origin={mapOrigin}
+          routeGeometry={showMap ? routes[selectedIdx].geometry : EMPTY_GEOMETRY}
           routeIndex={selectedIdx}
           showRoute={showMap}
         />
@@ -77,7 +80,11 @@ export default function App() {
       <div className="absolute inset-y-0 left-0 z-10 flex items-center justify-start p-4 sm:p-6 pointer-events-none">
         <div className="pointer-events-auto w-full max-w-xs sm:max-w-sm">
           {state === 'form' && (
-            <RouteForm onSubmit={handleFormReady} onError={handleError} />
+            <RouteForm
+              onSubmit={handleFormReady}
+              onError={handleError}
+              onOriginPreview={setPreviewOrigin}
+            />
           )}
 
           {state === 'loading' && (
