@@ -17,9 +17,7 @@ const { title = 'Walk10K' } = Astro.props;
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
-  <body class="min-h-screen bg-white text-gray-900 antialiased">
-    <main class="max-w-lg mx-auto px-4 py-10">
-      <slot />
-    </main>
+  <body class="h-screen w-screen overflow-hidden">
+    <slot />
   </body>
 </html>

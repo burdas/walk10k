@@ -5,9 +5,10 @@ interface RouteMapProps {
   origin: Coordinates;
   routeGeometry: Coordinates[];
   routeIndex: number;
+  showRoute: boolean;
 }
 
-export default function RouteMap({ origin, routeGeometry, routeIndex }: RouteMapProps) {
+export default function RouteMap({ origin, routeGeometry, routeIndex, showRoute }: RouteMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapObj = useRef<import('leaflet').Map | null>(null);
   const routeLayer = useRef<import('leaflet').Polyline | null>(null);
@@ -21,8 +22,12 @@ export default function RouteMap({ origin, routeGeometry, routeIndex }: RouteMap
       const L = await import('leaflet');
       if (cancelled || !mapRef.current) return;
 
-      const map = L.map(mapRef.current!, { zoomControl: true, scrollWheelZoom: true })
-        .setView([origin.lat, origin.lon], 14);
+      const map = L.map(mapRef.current!, {
+        zoomControl: false,
+        scrollWheelZoom: true,
+      }).setView([origin.lat, origin.lon], 14);
+
+      L.control.zoom({ position: 'topright' }).addTo(map);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -39,7 +44,10 @@ export default function RouteMap({ origin, routeGeometry, routeIndex }: RouteMap
       L.marker([origin.lat, origin.lon], { icon }).addTo(map);
 
       mapObj.current = map;
-      drawRoute(L);
+
+      if (showRoute && routeGeometry.length > 0) {
+        drawRoute(L);
+      }
     }
 
     function drawRoute(L: typeof import('leaflet')) {
@@ -74,9 +82,12 @@ export default function RouteMap({ origin, routeGeometry, routeIndex }: RouteMap
       const L = await import('leaflet');
       if (!mapObj.current) return;
 
+      mapObj.current.setView([origin.lat, origin.lon], 14);
       routeLayer.current?.remove();
+
+      if (!showRoute || routeGeometry.length === 0) return;
+
       const latlngs = routeGeometry.map((c) => [c.lat, c.lon] as [number, number]);
-      if (latlngs.length === 0) return;
 
       routeLayer.current = L.polyline(latlngs, {
         color: '#000',
@@ -88,12 +99,12 @@ export default function RouteMap({ origin, routeGeometry, routeIndex }: RouteMap
     }
 
     update();
-  }, [routeIndex, routeGeometry]);
+  }, [origin, routeIndex, routeGeometry, showRoute]);
 
   return (
     <div
       ref={mapRef}
-      className="w-full h-[400px] rounded-xl overflow-hidden border border-gray-200"
+      className="w-full h-full"
     />
   );
 }

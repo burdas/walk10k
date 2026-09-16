@@ -1,3 +1,6 @@
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 import type { RouteResult } from '../types/routes';
 import { formatDistance, formatDuration, metersToSteps } from '../lib/distance';
 import { STEP_LENGTH_DEFAULT } from '../lib/constants';
@@ -12,32 +15,34 @@ export default function RouteCardList({ routes, selectedIndex, onSelect }: Props
   if (routes.length === 0) return null;
 
   return (
-    <div className="w-full max-w-md space-y-3">
-      <h2 className="text-sm font-medium text-gray-500 text-center">Rutas encontradas</h2>
+    <div className="space-y-2">
       {routes.map((route, i) => (
         <button
           key={route.seed}
           type="button"
           onClick={() => onSelect(i)}
-          className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
-            selectedIndex === i
-              ? 'border-black bg-gray-50'
-              : 'border-gray-200 hover:border-gray-300 bg-white'
-          }`}
+          className="w-full text-left"
         >
-          <div className="flex justify-between items-start">
-            <div>
-              <span className="font-semibold text-sm">Ruta {i + 1}</span>
-              <span className="text-xs text-gray-400 ml-2">#{route.seed}</span>
-            </div>
-            <span className="text-xs text-gray-400">
-              {formatDistance(route.distance)}
-            </span>
-          </div>
-          <div className="mt-1 text-xs text-gray-500 space-x-3">
-            <span>{metersToSteps(route.distance, STEP_LENGTH_DEFAULT).toLocaleString('es-ES')} pasos</span>
-            <span>{formatDuration(route.duration)}</span>
-          </div>
+          <Card
+            className={cn(
+              'liquid-glass bg-transparent! shadow-sm cursor-pointer transition-all hover:brightness-105',
+              selectedIndex === i ? 'ring-2! ring-foreground/70' : 'ring-0!'
+            )}
+            size="sm"
+          >
+            <CardContent className="flex items-center justify-between py-3 px-4">
+              <div className="flex items-center gap-3">
+                <span className="font-semibold text-sm">Ruta {i + 1}</span>
+                <Badge variant="secondary">
+                  {formatDistance(route.distance)}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                <span>{metersToSteps(route.distance, STEP_LENGTH_DEFAULT).toLocaleString('es-ES')} pasos</span>
+                <span>{formatDuration(route.duration)}</span>
+              </div>
+            </CardContent>
+          </Card>
         </button>
       ))}
     </div>

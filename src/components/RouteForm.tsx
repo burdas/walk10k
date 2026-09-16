@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import StepSelector from './StepSelector';
 import OriginSelector from './OriginSelector';
 import type { Coordinates } from '../types/routes';
@@ -23,8 +25,8 @@ export default function RouteForm({ onSubmit, onError }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-8">
-      <h1 className="text-4xl font-bold tracking-tight">Walk10K</h1>
+    <div className="liquid-glass-strong rounded-2xl px-8 py-10 flex flex-col items-center gap-6 w-full">
+      <h1 className="text-3xl font-bold tracking-tight">Walk10K</h1>
       <StepSelector value={steps} onChange={setSteps} />
       <OriginSelector
         onLocation={(lat, lon, label) => {
@@ -34,16 +36,16 @@ export default function RouteForm({ onSubmit, onError }: Props) {
         onError={onError}
       />
       {originLabel && (
-        <p className="text-xs text-gray-400 max-w-xs text-center truncate">{originLabel}</p>
+        <p className="text-xs text-gray-400 max-w-full text-center truncate">{originLabel}</p>
       )}
-      <button
-        type="button"
+      <Button
         onClick={handleSubmit}
         disabled={!origin}
-        className="w-full max-w-xs px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full"
+        size="lg"
       >
         GENERAR RUTAS
-      </button>
+      </Button>
     </div>
   );
 }

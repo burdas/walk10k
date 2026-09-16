@@ -1,3 +1,5 @@
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 
 interface Props {
@@ -51,34 +53,32 @@ export default function OriginSelector({ onLocation, onError }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      <span className="text-sm text-gray-500">Punto de inicio</span>
-      <button
-        type="button"
+    <div className="flex flex-col items-center gap-3 w-full">
+      <span className="text-xs text-gray-500">Punto de inicio</span>
+      <Button
+        variant="outline"
         onClick={useGeolocation}
         disabled={mode === 'gps'}
-        className="w-full max-w-xs px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+        className="w-full"
       >
         {mode === 'gps' ? 'Obteniendo ubicación...' : '📍 Usar mi ubicación'}
-      </button>
+      </Button>
       <span className="text-xs text-gray-400">o</span>
-      <div className="flex flex-col items-center gap-2 w-full max-w-xs">
-        <input
-          type="text"
+      <div className="flex flex-col items-center gap-2 w-full">
+        <Input
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && searchAddress()}
           placeholder="Calle Mayor 15, Peralta"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
         />
-        <button
-          type="button"
+        <Button
+          variant="outline"
           onClick={searchAddress}
           disabled={loading || !address.trim()}
-          className="w-full px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+          className="w-full"
         >
           {loading ? 'Buscando...' : 'Buscar dirección'}
-        </button>
+        </Button>
       </div>
     </div>
   );
