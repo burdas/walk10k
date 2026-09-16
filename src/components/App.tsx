@@ -80,27 +80,38 @@ export default function App() {
       <div className="absolute inset-y-0 left-0 z-10 flex items-center justify-start p-4 sm:p-6 pointer-events-none">
         <div className="pointer-events-auto w-full max-w-xs sm:max-w-sm">
           {state === 'form' && (
-            <RouteForm
-              onSubmit={handleFormReady}
-              onError={handleError}
-              onOriginPreview={setPreviewOrigin}
-            />
+            <div
+              key="form"
+              className="animate-in fade-in slide-in-from-left-4 zoom-in-95 duration-500 fill-mode-both"
+            >
+              <RouteForm
+                onSubmit={handleFormReady}
+                onError={handleError}
+                onOriginPreview={setPreviewOrigin}
+              />
+            </div>
           )}
 
           {state === 'loading' && (
-            <div className="liquid-glass-strong rounded-2xl px-8 py-10 flex flex-col items-center gap-4">
+            <div
+              key="loading"
+              className="liquid-glass-strong rounded-2xl px-8 py-10 flex flex-col items-center gap-4 animate-in fade-in zoom-in-95 duration-300 fill-mode-both"
+            >
               <div className="w-8 h-8 border-3 border-gray-300 border-t-black rounded-full animate-spin" />
               <p className="text-sm text-muted-foreground">Generando rutas circulares...</p>
             </div>
           )}
 
           {state === 'error' && (
-            <div className="liquid-glass-strong rounded-2xl px-8 py-10 flex flex-col items-center gap-4">
+            <div
+              key="error"
+              className="liquid-glass-strong rounded-2xl px-8 py-10 flex flex-col items-center gap-4 animate-[glass-shake_0.5s_ease-in-out_both]"
+            >
               <p className="text-sm text-destructive text-center">{errorMsg}</p>
               <button
                 type="button"
                 onClick={handleBack}
-                className="px-4 py-2 rounded-lg text-sm transition-colors bg-muted hover:bg-accent"
+                className="cursor-pointer px-4 py-2 rounded-lg text-sm transition-all hover:scale-[1.03] active:scale-95 bg-muted hover:bg-accent"
               >
                 Volver
               </button>
@@ -108,16 +119,21 @@ export default function App() {
           )}
 
           {state === 'results' && routes.length > 0 && (
-            <div className="flex flex-col gap-3">
-              <RouteCardList
-                routes={routes}
-                selectedIndex={selectedIdx}
-                onSelect={setSelectedIdx}
-              />
+            <div
+              key="results"
+              className="flex flex-col gap-3 max-h-[calc(100vh-2rem)] animate-in fade-in slide-in-from-left-4 duration-500 fill-mode-both"
+            >
+              <div className="glass-scroll overflow-y-auto p-1 -m-1">
+                <RouteCardList
+                  routes={routes}
+                  selectedIndex={selectedIdx}
+                  onSelect={setSelectedIdx}
+                />
+              </div>
               <button
                 type="button"
                 onClick={handleBack}
-                className="liquid-glass w-full px-4 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="liquid-glass liquid-glass-interactive cursor-pointer w-full px-4 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground"
               >
                 Nueva búsqueda
               </button>

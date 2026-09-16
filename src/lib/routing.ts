@@ -1,5 +1,5 @@
 import type { Coordinates, RouteResult } from '../types/routes';
-import { SEED_COUNT, TOLERANCE_RATIO } from './constants';
+import { SEED_COUNT, TOLERANCE_RATIO, MAX_ROUTES_RETURNED } from './constants';
 
 const ORS_URL = 'https://api.openrouteservice.org/v2/directions/foot-walking/geojson';
 
@@ -128,5 +128,5 @@ export async function generateRoutes(
     (a, b) => Math.abs(a.distance - targetDistance) - Math.abs(b.distance - targetDistance)
   );
 
-  return sorted.slice(0, 4);
+  return sorted.slice(0, MAX_ROUTES_RETURNED);
 }

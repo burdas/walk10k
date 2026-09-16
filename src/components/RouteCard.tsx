@@ -1,6 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import type { CSSProperties } from 'react';
 import type { RouteResult } from '../types/routes';
 import { formatDistance, formatDuration, metersToSteps } from '../lib/distance';
 import { STEP_LENGTH_DEFAULT } from '../lib/constants';
@@ -21,11 +22,12 @@ export default function RouteCardList({ routes, selectedIndex, onSelect }: Props
           key={route.seed}
           type="button"
           onClick={() => onSelect(i)}
-          className="w-full text-left"
+          style={{ '--stagger-delay': `${Math.min(i, 8) * 80}ms` } as CSSProperties}
+          className="stagger-card w-full text-left"
         >
           <Card
             className={cn(
-              'liquid-glass bg-transparent! shadow-sm cursor-pointer transition-all hover:brightness-105',
+              'liquid-glass liquid-glass-interactive bg-transparent! shadow-sm cursor-pointer transition-all hover:brightness-105',
               selectedIndex === i ? 'ring-2! ring-foreground/70' : 'ring-0!'
             )}
             size="sm"

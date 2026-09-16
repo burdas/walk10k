@@ -12,6 +12,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import type { GeocodeSuggestion } from '../types/routes';
+import { LAST_ADDRESS_KEY } from '../lib/constants';
 
 interface Props {
   onLocation: (lat: number, lon: number, label?: string) => void;
@@ -19,15 +20,43 @@ interface Props {
 
 const MIN_QUERY_LENGTH = 3;
 
+function readStoredAddress(): GeocodeSuggestion | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(LAST_ADDRESS_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as GeocodeSuggestion;
+    if (
+      typeof parsed?.lat !== 'number' ||
+      typeof parsed?.lon !== 'number' ||
+      typeof parsed?.label !== 'string' ||
+      parsed.label.length === 0
+    ) {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
 export default function OriginSelector({ onLocation }: Props) {
-  const [address, setAddress] = useState('');
+  const [storedAddress] = useState(readStoredAddress);
+  const [address, setAddress] = useState(() => storedAddress?.label ?? '');
   const [suggestions, setSuggestions] = useState<GeocodeSuggestion[]>([]);
   const [searching, setSearching] = useState(false);
   const [open, setOpen] = useState(false);
 
   const debouncedAddress = useDebouncedValue(address, 350);
-  const selectedLabelRef = useRef<string | null>(null);
+  const selectedLabelRef = useRef<string | null>(storedAddress?.label ?? null);
   const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    if (!storedAddress) return;
+    onLocation(storedAddress.lat, storedAddress.lon, storedAddress.label);
+    // Restaura el origen solo una vez al montar
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const query = debouncedAddress.trim();
@@ -74,6 +103,11 @@ export default function OriginSelector({ onLocation }: Props) {
     setAddress(item.label);
     setSuggestions([]);
     setOpen(false);
+    try {
+      window.localStorage.setItem(LAST_ADDRESS_KEY, JSON.stringify(item));
+    } catch {
+      // localStorage no disponible (modo privado o cuota); se ignora
+    }
     onLocation(item.lat, item.lon, item.label);
   }
 
