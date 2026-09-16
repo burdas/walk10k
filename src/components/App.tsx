@@ -1,8 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import RouteForm from './RouteForm';
 import RouteMap from './RouteMap';
 import RouteCardList from './RouteCard';
+import SettingsButton from './SettingsButton';
 import type { Coordinates, RouteResult } from '../types/routes';
+import { loadSettings, saveSettings, type Settings } from '../lib/settings';
 
 type AppState = 'form' | 'loading' | 'results' | 'error';
 
@@ -15,6 +17,15 @@ export default function App() {
   const [routes, setRoutes] = useState<RouteResult[]>([]);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
+  const [settings, setSettings] = useState<Settings>(() => loadSettings());
+
+  useEffect(() => {
+    saveSettings(settings);
+  }, [settings]);
+
+  const handleSettingsChange = useCallback((next: Settings) => {
+    setSettings(next);
+  }, []);
 
   const handleFormReady = useCallback(
     async (orig: Coordinates, stepCount: number, stepLength: number) => {
@@ -30,6 +41,7 @@ export default function App() {
             lon: orig.lon,
             steps: stepCount,
             stepLength,
+            toleranceRatio: settings.toleranceRatio,
           }),
         });
         const data = await res.json();
@@ -46,7 +58,7 @@ export default function App() {
         setState('error');
       }
     },
-    []
+    [settings.toleranceRatio]
   );
 
   const handleError = useCallback((msg: string) => {
@@ -88,6 +100,7 @@ export default function App() {
                 onSubmit={handleFormReady}
                 onError={handleError}
                 onOriginPreview={setPreviewOrigin}
+                stepLength={settings.stepLength}
               />
             </div>
           )}
@@ -140,6 +153,11 @@ export default function App() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Ajustes */}
+      <div className="absolute top-4 right-4 z-20 sm:top-6 sm:right-6">
+        <SettingsButton settings={settings} onChange={handleSettingsChange} />
       </div>
     </div>
   );

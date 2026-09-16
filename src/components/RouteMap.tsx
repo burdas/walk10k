@@ -124,7 +124,7 @@ export default function RouteMap({ origin, routeGeometry, routeIndex, showRoute 
         scrollWheelZoom: true,
       }).setView([NEUTRAL_VIEW.lat, NEUTRAL_VIEW.lon], NEUTRAL_ZOOM);
 
-      L.control.zoom({ position: 'topright' }).addTo(map);
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',

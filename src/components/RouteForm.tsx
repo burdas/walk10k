@@ -3,15 +3,15 @@ import { Button } from '@/components/ui/button';
 import StepSelector from './StepSelector';
 import OriginSelector from './OriginSelector';
 import type { Coordinates } from '../types/routes';
-import { STEP_LENGTH_DEFAULT } from '../lib/constants';
 
 interface Props {
   onSubmit: (origin: Coordinates, steps: number, stepLength: number) => void;
   onError: (msg: string) => void;
   onOriginPreview: (origin: Coordinates | null) => void;
+  stepLength: number;
 }
 
-export default function RouteForm({ onSubmit, onError, onOriginPreview }: Props) {
+export default function RouteForm({ onSubmit, onError, onOriginPreview, stepLength }: Props) {
   const [steps, setSteps] = useState(10000);
   const [origin, setOrigin] = useState<Coordinates | null>(null);
 
@@ -20,7 +20,7 @@ export default function RouteForm({ onSubmit, onError, onOriginPreview }: Props)
       onError('Selecciona un punto de inicio');
       return;
     }
-    onSubmit(origin, steps, STEP_LENGTH_DEFAULT);
+    onSubmit(origin, steps, stepLength);
   }
 
   return (

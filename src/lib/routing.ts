@@ -1,6 +1,5 @@
 import type { Coordinates, RouteResult } from '../types/routes';
 import { SEED_COUNT, TOLERANCE_RATIO, MAX_ROUTES_RETURNED } from './constants';
-
 const ORS_URL = 'https://api.openrouteservice.org/v2/directions/foot-walking/geojson';
 
 function getApiKey(): string {
@@ -86,7 +85,8 @@ export async function generateRoutes(
   lat: number,
   lon: number,
   targetDistance: number,
-  stepLength: number
+  stepLength: number,
+  toleranceRatio: number = TOLERANCE_RATIO
 ): Promise<RouteResult[]> {
   const points = pickPoints(targetDistance);
   const orsLength = compensateLength(targetDistance);
@@ -117,8 +117,8 @@ export async function generateRoutes(
     if (r.status === 'fulfilled') candidates.push(r.value);
   }
 
-  const toleranceLow = targetDistance * (1 - TOLERANCE_RATIO);
-  const toleranceHigh = targetDistance * (1 + TOLERANCE_RATIO);
+  const toleranceLow = targetDistance * (1 - toleranceRatio);
+  const toleranceHigh = targetDistance * (1 + toleranceRatio);
 
   const filtered = candidates.filter(
     (r) => r.distance >= toleranceLow && r.distance <= toleranceHigh

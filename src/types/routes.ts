@@ -21,6 +21,7 @@ export interface RoutesRequest {
   lon: number;
   steps: number;
   stepLength: number;
+  toleranceRatio?: number;
 }
 
 export interface RouteResult {

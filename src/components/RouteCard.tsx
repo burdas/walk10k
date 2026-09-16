@@ -3,8 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { CSSProperties } from 'react';
 import type { RouteResult } from '../types/routes';
-import { formatDistance, formatDuration, metersToSteps } from '../lib/distance';
-import { STEP_LENGTH_DEFAULT } from '../lib/constants';
+import { formatDistance, formatDuration } from '../lib/distance';
 
 interface Props {
   routes: RouteResult[];
@@ -40,7 +39,7 @@ export default function RouteCardList({ routes, selectedIndex, onSelect }: Props
                 </Badge>
               </div>
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                <span>{metersToSteps(route.distance, STEP_LENGTH_DEFAULT).toLocaleString('es-ES')} pasos</span>
+                <span>{route.steps.toLocaleString('es-ES')} pasos</span>
                 <span>{formatDuration(route.duration)}</span>
               </div>
             </CardContent>

@@ -1,18 +1,20 @@
 import type { APIRoute } from 'astro';
 import { generateRoutes } from '../../lib/routing';
 import { stepsToMeters } from '../../lib/distance';
-import { MIN_DISTANCE_M, MAX_DISTANCE_M, STEP_LENGTH_DEFAULT } from '../../lib/constants';
+import { MIN_DISTANCE_M, MAX_DISTANCE_M } from '../../lib/constants';
+import { sanitizeSettings } from '../../lib/settings';
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { lat, lon, steps, stepLength } = body as {
+    const { lat, lon, steps, stepLength, toleranceRatio } = body as {
       lat?: number;
       lon?: number;
       steps?: number;
       stepLength?: number;
+      toleranceRatio?: number;
     };
 
     if (typeof lat !== 'number' || typeof lon !== 'number') {
@@ -29,7 +31,8 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const effectiveStepLength = stepLength || STEP_LENGTH_DEFAULT;
+    const { stepLength: effectiveStepLength, toleranceRatio: effectiveToleranceRatio } =
+      sanitizeSettings({ stepLength, toleranceRatio });
     const targetDistance = stepsToMeters(steps, effectiveStepLength);
 
     if (targetDistance < MIN_DISTANCE_M || targetDistance > MAX_DISTANCE_M) {
@@ -41,7 +44,13 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const routes = await generateRoutes(lat, lon, targetDistance, effectiveStepLength);
+    const routes = await generateRoutes(
+      lat,
+      lon,
+      targetDistance,
+      effectiveStepLength,
+      effectiveToleranceRatio
+    );
 
     if (routes.length === 0) {
       return new Response(
