@@ -89,7 +89,7 @@ export default function SettingsButton({ settings, onChange }: Props) {
         <div
           role="dialog"
           aria-label="Ajustes de cálculo"
-          className="liquid-glass-strong absolute right-0 top-full z-20 mt-2 w-72 origin-top-right rounded-2xl p-5 flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 zoom-in-95 duration-200 fill-mode-both"
+          className="liquid-glass-strong absolute left-0 top-full sm:left-auto sm:right-0 z-20 mt-2 w-72 origin-top-left sm:origin-top-right rounded-2xl p-5 flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 zoom-in-95 duration-200 fill-mode-both"
         >
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold">Ajustes</h2>

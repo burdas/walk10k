@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { STEP_OPTIONS } from '../lib/constants';
 
 interface Props {
@@ -7,21 +9,57 @@ interface Props {
   compact?: boolean;
 }
 
+const MIN_STEPS = 100;
+const MAX_STEPS = 100000;
+
 export default function StepSelector({ value, onChange, compact }: Props) {
+  const [openCustom, setOpenCustom] = useState(false);
+  const [customValue, setCustomValue] = useState('');
+
+  function handleCustomAccept() {
+    const parsed = Number.parseInt(customValue, 10);
+    if (!Number.isNaN(parsed) && parsed >= MIN_STEPS && parsed <= MAX_STEPS) {
+      onChange(parsed);
+      setOpenCustom(false);
+      setCustomValue('');
+    }
+  }
+
   if (compact) {
     return (
-      <div className="flex flex-wrap justify-center gap-1.5">
-        {STEP_OPTIONS.map((opt) => (
+      <>
+        <div className="flex flex-wrap justify-center gap-1.5">
+          {STEP_OPTIONS.map((opt) => (
+            <Button
+              key={opt}
+              variant={value === opt ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => onChange(opt)}
+            >
+              {opt.toLocaleString('es-ES')}
+            </Button>
+          ))}
           <Button
-            key={opt}
-            variant={value === opt ? 'default' : 'outline'}
+            variant={value > 0 && !STEP_OPTIONS.includes(value as (typeof STEP_OPTIONS)[number]) ? 'default' : 'outline'}
             size="sm"
-            onClick={() => onChange(opt)}
+            onClick={() => {
+              setCustomValue(String(value));
+              setOpenCustom(true);
+            }}
           >
-            {opt.toLocaleString('es-ES')}
+            Custom
           </Button>
-        ))}
-      </div>
+        </div>
+
+        {openCustom && (
+          <CustomDialog
+            value={customValue}
+            onChange={setCustomValue}
+            onAccept={handleCustomAccept}
+            onCancel={() => { setOpenCustom(false); setCustomValue(''); }}
+          />
+        )}
+      </>
     );
   }
 
@@ -66,6 +104,59 @@ export default function StepSelector({ value, onChange, compact }: Props) {
             {opt.toLocaleString('es-ES')}
           </Button>
         ))}
+        <Button
+          variant={value > 0 && !STEP_OPTIONS.includes(value as (typeof STEP_OPTIONS)[number]) ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => {
+            setCustomValue(String(value));
+            setOpenCustom(true);
+          }}
+        >
+          Custom
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function CustomDialog({
+  value,
+  onChange,
+  onAccept,
+  onCancel,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  onAccept: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div
+      role="dialog"
+      aria-label="Pasos personalizados"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={onCancel}
+    >
+      <div
+        className="liquid-glass-strong rounded-2xl p-6 w-72 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200 fill-mode-both"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className="text-sm font-semibold">Pasos personalizados</h3>
+        <Input
+          type="number"
+          inputMode="numeric"
+          min={MIN_STEPS}
+          max={MAX_STEPS}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') onAccept(); }}
+          placeholder={`${MIN_STEPS} – ${MAX_STEPS.toLocaleString('es-ES')}`}
+          autoFocus
+        />
+        <div className="flex gap-2 justify-end">
+          <Button variant="ghost" onClick={onCancel}>Cancelar</Button>
+          <Button onClick={onAccept}>Aceptar</Button>
+        </div>
       </div>
     </div>
   );
