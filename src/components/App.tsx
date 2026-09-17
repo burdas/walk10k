@@ -223,7 +223,7 @@ export default function App() {
               aria-live="polite"
               className="flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-4 sm:slide-in-from-left-4 duration-500 fill-mode-both"
             >
-              <div className="scrollbar-hidden scroll-fade-bottom overflow-y-auto p-1 -m-1">
+              <div className="scrollbar-hidden scroll-fade-bottom overflow-y-auto overflow-x-hidden p-1 -m-1">
                 <RouteCardList
                   routes={routes}
                   selectedIndex={selectedIdx}
