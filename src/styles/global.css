@@ -461,6 +461,15 @@
   background: rgb(255 255 255 / 0.6) !important;
 }
 
+@media (max-width: 639px) {
+  .leaflet-control-zoom {
+    position: fixed !important;
+    top: 1rem !important;
+    right: 1rem !important;
+    bottom: auto !important;
+  }
+}
+
 .leaflet-control-attribution {
   background: rgb(255 255 255 / 0.6) !important;
   -webkit-backdrop-filter: blur(8px);
