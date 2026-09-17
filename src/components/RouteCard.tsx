@@ -26,7 +26,7 @@ export default function RouteCardList({ routes, selectedIndex, onSelect }: Props
         >
           <Card
             className={cn(
-              'ring-0! bg-card shadow-sm cursor-pointer transition-all hover:brightness-105 border-2 border-transparent',
+              'ring-0! liquid-glass-strong rounded-2xl cursor-pointer transition-all hover:brightness-105 border-2 border-transparent',
               selectedIndex === i ? '!border-foreground/70' : 'border-transparent'
             )}
             size="sm"

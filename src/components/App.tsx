@@ -233,7 +233,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={handleBack}
-                className="cursor-pointer w-full px-4 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground border border-border/50 hover:bg-muted/50 transition-colors"
+                className="liquid-glass-strong rounded-2xl cursor-pointer w-full px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-all"
               >
                 Nueva búsqueda
               </button>
