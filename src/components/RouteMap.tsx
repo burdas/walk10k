@@ -78,9 +78,10 @@ export default function RouteMap({ origin, routeGeometry, routeIndex, showRoute 
     const { origin, routeGeometry, showRoute } = stateRef.current;
 
     if (origin) {
-      if (originMarker.current) {
+      if (originMarker.current && map.hasLayer(originMarker.current)) {
         originMarker.current.setLatLng([origin.lat, origin.lon]);
       } else {
+        originMarker.current?.remove();
         originMarker.current = L.marker([origin.lat, origin.lon], {
           icon: createMarkerIcon(L),
         }).addTo(map);
@@ -141,6 +142,8 @@ export default function RouteMap({ origin, routeGeometry, routeIndex, showRoute 
       cancelled = true;
       routeAnim.current?.cancel();
       routeAnim.current = null;
+      originMarker.current = null;
+      routeLayer.current = null;
       mapObj.current?.remove();
       mapObj.current = null;
     };

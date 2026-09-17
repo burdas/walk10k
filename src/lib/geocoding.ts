@@ -133,7 +133,13 @@ function cartoCiudadToSuggestion(candidate: CartoCiudadCandidate): GeocodeSugges
   const lat = typeof candidate.lat === 'string' ? Number.parseFloat(candidate.lat) : candidate.lat;
   const lon = typeof candidate.lng === 'string' ? Number.parseFloat(candidate.lng) : candidate.lng;
 
-  if (typeof lat !== 'number' || typeof lon !== 'number' || Number.isNaN(lat) || Number.isNaN(lon)) {
+  if (
+    typeof lat !== 'number' ||
+    typeof lon !== 'number' ||
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lon) ||
+    (lat === 0 && lon === 0)
+  ) {
     return null;
   }
 

@@ -29,6 +29,7 @@ function readStoredAddress(): GeocodeSuggestion | null {
     if (
       typeof parsed?.lat !== 'number' ||
       typeof parsed?.lon !== 'number' ||
+      (parsed.lat === 0 && parsed.lon === 0) ||
       typeof parsed?.label !== 'string' ||
       parsed.label.length === 0
     ) {

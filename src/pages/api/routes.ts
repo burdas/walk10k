@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { generateRoutes } from '../../lib/routing';
+import { generateRoutes, OrsServiceError } from '../../lib/routing';
 import { stepsToMeters } from '../../lib/distance';
 import { MIN_DISTANCE_M, MAX_DISTANCE_M } from '../../lib/constants';
 import { sanitizeSettings } from '../../lib/settings';
@@ -66,6 +66,12 @@ export const POST: APIRoute = async ({ request }) => {
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (err) {
+    if (err instanceof OrsServiceError) {
+      return new Response(
+        JSON.stringify({ error: err.message }),
+        { status: err.status, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
     const message = err instanceof Error ? err.message : 'Error desconocido';
     return new Response(
       JSON.stringify({ error: message }),
