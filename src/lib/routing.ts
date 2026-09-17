@@ -51,7 +51,8 @@ async function fetchRoundTrip(
   lon: number,
   lengthM: number,
   seed: number,
-  points: number
+  points: number,
+  signal?: AbortSignal
 ): Promise<OrsGeoJsonFeature> {
   const apiKey = getApiKey();
   if (!apiKey) throw new OrsServiceError('ORS_API_KEY no configurada', 500);
@@ -78,6 +79,7 @@ async function fetchRoundTrip(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(body),
+    signal,
   });
 
   if (!res.ok) {
@@ -149,11 +151,14 @@ export async function generateRoutes(
   lon: number,
   targetDistance: number,
   stepLength: number,
-  toleranceRatio: number = TOLERANCE_RATIO
+  toleranceRatio: number = TOLERANCE_RATIO,
+  signal?: AbortSignal
 ): Promise<RouteResult[]> {
   const key = cacheKey(lat, lon, targetDistance, stepLength, toleranceRatio);
   const cached = cache.get(key);
   if (cached && cached.expiresAt > Date.now()) {
+    cache.delete(key);
+    cache.set(key, cached);
     return cached.routes;
   }
 
@@ -162,7 +167,7 @@ export async function generateRoutes(
   const seeds = Array.from({ length: SEED_COUNT }, (_, i) => i + 1);
 
   const results = await mapWithConcurrency(seeds, ORS_CONCURRENCY, (seed) =>
-    fetchRoundTrip(lat, lon, orsLength, seed, points).then((feature) => {
+    fetchRoundTrip(lat, lon, orsLength, seed, points, signal).then((feature) => {
       const geom = feature.geometry.coordinates.map(([lon, lat]) => ({ lat, lon }));
       const distance = Math.round(feature.properties.summary.distance);
       const duration = Math.round(feature.properties.summary.duration);

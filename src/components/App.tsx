@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import RouteForm from './RouteForm';
 import RouteMap from './RouteMap';
 import RouteCardList from './RouteCard';
@@ -50,10 +50,19 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState('');
   const [settings, setSettings] = useState<Settings>(() => loadSettings());
   const [recentAddresses, setRecentAddresses] = useState<GeocodeSuggestion[]>(() => readRecentAddresses());
+  const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     saveSettings(settings);
   }, [settings]);
+
+  useEffect(() => {
+    return () => {
+      if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+      abortRef.current?.abort();
+    };
+  }, []);
 
   const handleSettingsChange = useCallback((next: Settings) => {
     setSettings(next);
@@ -78,6 +87,10 @@ export default function App() {
 
   const handleFormReady = useCallback(
     async (orig: Coordinates, stepCount: number, stepLength: number) => {
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+
       setOrigin(orig);
       setState('loading');
       setErrorMsg('');
@@ -92,6 +105,7 @@ export default function App() {
             stepLength,
             toleranceRatio: settings.toleranceRatio,
           }),
+          signal: controller.signal,
         });
         const data = await res.json();
         if (!res.ok) {
@@ -102,7 +116,8 @@ export default function App() {
         setRoutes(data.routes);
         setSelectedIdx(0);
         setState('results');
-      } catch {
+      } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
         setErrorMsg('Error de red al generar las rutas');
         setState('error');
       }
@@ -110,13 +125,20 @@ export default function App() {
     [settings.toleranceRatio]
   );
 
+  const handleCancel = useCallback(() => {
+    abortRef.current?.abort();
+    setState('form');
+  }, []);
+
   const handleError = useCallback((msg: string) => {
+    if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
     setErrorMsg(msg);
     setState('error');
-    setTimeout(() => setState('form'), 4000);
+    errorTimerRef.current = setTimeout(() => setState('form'), 4000);
   }, []);
 
   const handleBack = useCallback(() => {
+    if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
     setState('form');
     setRoutes([]);
     setErrorMsg('');
@@ -160,16 +182,27 @@ export default function App() {
           {state === 'loading' && (
             <div
               key="loading"
+              role="status"
+              aria-live="polite"
               className="liquid-glass-strong rounded-2xl px-8 py-10 flex flex-col items-center gap-4 animate-in fade-in zoom-in-95 duration-300 fill-mode-both"
             >
               <div className="w-8 h-8 border-3 border-gray-300 border-t-black rounded-full animate-spin" />
               <p className="text-sm text-muted-foreground">Generando rutas circulares...</p>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="cursor-pointer px-4 py-2 rounded-lg text-sm transition-all hover:scale-[1.03] active:scale-95 bg-muted hover:bg-accent"
+              >
+                Cancelar
+              </button>
             </div>
           )}
 
           {state === 'error' && (
             <div
               key="error"
+              role="alert"
+              aria-live="assertive"
               className="liquid-glass-strong rounded-2xl px-8 py-10 flex flex-col items-center gap-4 animate-[glass-shake_0.5s_ease-in-out_both]"
             >
               <p className="text-sm text-destructive text-center">{errorMsg}</p>
@@ -186,6 +219,7 @@ export default function App() {
           {state === 'results' && routes.length > 0 && (
             <div
               key="results"
+              aria-live="polite"
               className="flex flex-col gap-3 max-h-[calc(100vh-2rem)] animate-in fade-in slide-in-from-left-4 duration-500 fill-mode-both"
             >
               <div className="glass-scroll overflow-y-auto p-1 -m-1">

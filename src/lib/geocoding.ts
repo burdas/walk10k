@@ -274,7 +274,11 @@ export async function searchAddresses(
 
   const key = normalizeQuery(query);
   const cached = cache.get(key);
-  if (cached) return cached;
+  if (cached) {
+    cache.delete(key);
+    cache.set(key, cached);
+    return cached;
+  }
 
   const [photon, cartoCiudad] = await Promise.all([
     searchPhoton(query, limit).catch(() => [] as GeocodeSuggestion[]),

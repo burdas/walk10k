@@ -3,10 +3,25 @@ import { generateRoutes, OrsServiceError } from '../../lib/routing';
 import { stepsToMeters } from '../../lib/distance';
 import { MIN_DISTANCE_M, MAX_DISTANCE_M } from '../../lib/constants';
 import { sanitizeSettings } from '../../lib/settings';
+import { checkRateLimit } from '../../lib/rate-limit';
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+const MAX_REQUESTS = 5;
+const WINDOW_MS = 60_000;
+const ROUTE_TIMEOUT_MS = 30_000;
+
+export const POST: APIRoute = async ({ request, clientAddress }) => {
+  const ip = clientAddress ?? 'unknown';
+  const { allowed } = checkRateLimit(`routes:${ip}`, MAX_REQUESTS, WINDOW_MS);
+
+  if (!allowed) {
+    return new Response(
+      JSON.stringify({ error: 'Demasiadas peticiones. Inténtalo de nuevo más tarde.' }),
+      { status: 429, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     const body = await request.json();
     const { lat, lon, steps, stepLength, toleranceRatio } = body as {
@@ -44,28 +59,42 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const routes = await generateRoutes(
-      lat,
-      lon,
-      targetDistance,
-      effectiveStepLength,
-      effectiveToleranceRatio
-    );
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), ROUTE_TIMEOUT_MS);
 
-    if (routes.length === 0) {
+    try {
+      const routes = await generateRoutes(
+        lat,
+        lon,
+        targetDistance,
+        effectiveStepLength,
+        effectiveToleranceRatio,
+        controller.signal
+      );
+
+      if (routes.length === 0) {
+        return new Response(
+          JSON.stringify({
+            error: 'No se encontraron rutas adecuadas para esta ubicación. Prueba con otro número de pasos.',
+          }),
+          { status: 404, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+
       return new Response(
-        JSON.stringify({
-          error: 'No se encontraron rutas adecuadas para esta ubicación. Prueba con otro número de pasos.',
-        }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
+        JSON.stringify({ targetDistance, routes }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    } finally {
+      clearTimeout(timeout);
+    }
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      return new Response(
+        JSON.stringify({ error: 'La generación de rutas ha tardado demasiado. Inténtalo de nuevo.' }),
+        { status: 504, headers: { 'Content-Type': 'application/json' } }
       );
     }
-
-    return new Response(
-      JSON.stringify({ targetDistance, routes }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    );
-  } catch (err) {
     if (err instanceof OrsServiceError) {
       return new Response(
         JSON.stringify({ error: err.message }),

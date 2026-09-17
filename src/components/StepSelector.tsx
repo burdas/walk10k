@@ -9,7 +9,7 @@ interface Props {
 export default function StepSelector({ value, onChange }: Props) {
   return (
     <div className="flex flex-col items-center gap-3 w-full">
-      <label className="text-xs text-gray-500">¿Cuántos pasos quieres dar?</label>
+      <label className="text-xs text-muted-foreground">¿Cuántos pasos quieres dar?</label>
       <div className="flex items-center gap-2">
         <Button
           variant="outline"

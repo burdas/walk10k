@@ -144,7 +144,13 @@ export default function RouteMap({ origin, routeGeometry, routeIndex, showRoute 
 
     init();
 
+    function handleResize() {
+      mapObj.current?.invalidateSize();
+    }
+    window.addEventListener('resize', handleResize);
+
     return () => {
+      window.removeEventListener('resize', handleResize);
       cancelled = true;
       routeAnim.current?.cancel();
       routeAnim.current = null;

@@ -14,6 +14,13 @@ const { title = 'Walk10K' } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Genera rutas circulares a pie de la distancia que quieras" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content="Genera rutas circulares a pie de la distancia que quieras" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content="Genera rutas circulares a pie de la distancia que quieras" />
+    <meta name="theme-color" content="#ffffff" />
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
