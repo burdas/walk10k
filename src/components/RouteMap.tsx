@@ -133,7 +133,8 @@ export default function RouteMap({ origin, routeGeometry, routeIndex, showRoute 
         scrollWheelZoom: true,
       }).setView([NEUTRAL_VIEW.lat, NEUTRAL_VIEW.lon], NEUTRAL_ZOOM);
 
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+      L.control.zoom({ position: isMobile ? 'topright' : 'bottomright' }).addTo(map);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',

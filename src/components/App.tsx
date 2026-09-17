@@ -161,7 +161,7 @@ export default function App() {
 
       {/* Bottom sheet en móvil, panel lateral en desktop */}
       <div className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-center p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:inset-y-0 sm:bottom-auto sm:left-0 sm:right-auto sm:items-center sm:justify-start sm:p-6 pointer-events-none">
-        <div className="pointer-events-auto w-full max-w-xs sm:max-w-sm max-h-[50vh] sm:max-h-[calc(100vh-2rem)] overflow-y-auto">
+        <div className="pointer-events-auto w-full sm:max-w-sm max-h-[50vh] sm:max-h-[calc(100vh-2rem)] overflow-y-auto">
           {state === 'form' && (
             <div
               key="form"
@@ -243,7 +243,7 @@ export default function App() {
       </div>
 
       {/* Ajustes */}
-      <div className="absolute top-4 right-4 pt-[max(0rem,env(safe-area-inset-top))] sm:top-6 sm:right-6 z-20">
+      <div className="absolute top-4 left-4 pt-[max(0rem,env(safe-area-inset-top))] sm:left-auto sm:right-4 sm:top-6 z-20">
         <SettingsButton settings={settings} onChange={handleSettingsChange} />
       </div>
     </div>
