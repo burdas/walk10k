@@ -3,12 +3,43 @@ import RouteForm from './RouteForm';
 import RouteMap from './RouteMap';
 import RouteCardList from './RouteCard';
 import SettingsButton from './SettingsButton';
-import type { Coordinates, RouteResult } from '../types/routes';
+import type { Coordinates, GeocodeSuggestion, RouteResult } from '../types/routes';
 import { loadSettings, saveSettings, type Settings } from '../lib/settings';
+import { RECENT_ADDRESSES_KEY } from '../lib/constants';
 
 type AppState = 'form' | 'loading' | 'results' | 'error';
 
 const EMPTY_GEOMETRY: Coordinates[] = [];
+
+const MAX_RECENT = 3;
+
+function readRecentAddresses(): GeocodeSuggestion[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(RECENT_ADDRESSES_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (item: GeocodeSuggestion) =>
+        typeof item?.lat === 'number' &&
+        typeof item?.lon === 'number' &&
+        !(item.lat === 0 && item.lon === 0) &&
+        typeof item?.label === 'string' &&
+        item.label.length > 0
+    );
+  } catch {
+    return [];
+  }
+}
+
+function saveRecentAddresses(addresses: GeocodeSuggestion[]) {
+  try {
+    window.localStorage.setItem(RECENT_ADDRESSES_KEY, JSON.stringify(addresses));
+  } catch {
+    // localStorage no disponible
+  }
+}
 
 export default function App() {
   const [state, setState] = useState<AppState>('form');
@@ -18,6 +49,7 @@ export default function App() {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
   const [settings, setSettings] = useState<Settings>(() => loadSettings());
+  const [recentAddresses, setRecentAddresses] = useState<GeocodeSuggestion[]>(() => readRecentAddresses());
 
   useEffect(() => {
     saveSettings(settings);
@@ -25,6 +57,23 @@ export default function App() {
 
   const handleSettingsChange = useCallback((next: Settings) => {
     setSettings(next);
+  }, []);
+
+  const handleSaveAddress = useCallback((item: GeocodeSuggestion) => {
+    setRecentAddresses((prev) => {
+      const filtered = prev.filter((a) => a.id !== item.id);
+      const next = [item, ...filtered].slice(0, MAX_RECENT);
+      saveRecentAddresses(next);
+      return next;
+    });
+  }, []);
+
+  const handleRemoveAddress = useCallback((id: string) => {
+    setRecentAddresses((prev) => {
+      const next = prev.filter((a) => a.id !== id);
+      saveRecentAddresses(next);
+      return next;
+    });
   }, []);
 
   const handleFormReady = useCallback(
@@ -98,9 +147,12 @@ export default function App() {
             >
               <RouteForm
                 onSubmit={handleFormReady}
+                onSaveAddress={handleSaveAddress}
+                onRemoveAddress={handleRemoveAddress}
                 onError={handleError}
                 onOriginPreview={setPreviewOrigin}
                 stepLength={settings.stepLength}
+                recentAddresses={recentAddresses}
               />
             </div>
           )}

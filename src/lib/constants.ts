@@ -19,7 +19,7 @@ export const MAX_DISTANCE_M = 50000;
 
 export const WALKING_SPEED_KMH = 5;
 
-export const LAST_ADDRESS_KEY = 'walk10k:lastAddress';
+export const RECENT_ADDRESSES_KEY = 'walk10k:recentAddresses';
 export const SETTINGS_KEY = 'walk10k:settings';
 
 export const DEFAULT_SETTINGS = {
