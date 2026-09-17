@@ -37,7 +37,7 @@ export default function StepSelector({ value, onChange }: Props) {
           +
         </Button>
       </div>
-      <div className="flex flex-wrap justify-center gap-1.5">
+      <div className="flex flex-wrap sm:flex-nowrap justify-center gap-1.5">
         {STEP_OPTIONS.map((opt) => (
           <Button
             key={opt}

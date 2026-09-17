@@ -357,6 +357,31 @@
   background-clip: content-box;
 }
 
+@media (hover: none) {
+  .liquid-glass-interactive {
+    transform: none;
+  }
+  .liquid-glass-interactive:active {
+    transform: scale(0.97);
+    box-shadow:
+      0 4px 12px -4px rgb(0 0 0 / 0.25),
+      inset 0 1px 0 rgb(255 255 255 / 0.7);
+  }
+}
+
+.scroll-fade-bottom {
+  position: relative;
+}
+.scroll-fade-bottom::after {
+  content: "";
+  position: sticky;
+  bottom: 0;
+  display: block;
+  height: 24px;
+  background: linear-gradient(transparent, rgb(255 255 255 / 0.8));
+  pointer-events: none;
+}
+
 .stagger-card {
   opacity: 0;
   animation: glass-fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -419,9 +444,9 @@
 }
 
 .leaflet-control-zoom a {
-  width: 34px !important;
-  height: 34px !important;
-  line-height: 34px !important;
+  width: 44px !important;
+  height: 44px !important;
+  line-height: 44px !important;
   font-size: 18px !important;
   color: var(--foreground) !important;
   background: transparent !important;

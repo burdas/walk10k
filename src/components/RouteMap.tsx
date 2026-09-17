@@ -105,8 +105,9 @@ export default function RouteMap({ origin, routeGeometry, routeIndex, showRoute 
       }).addTo(map);
       routeLayer.current = line;
 
+      const panelWidth = typeof window !== 'undefined' && window.innerWidth < 640 ? 40 : 462;
       map.flyToBounds(line.getBounds(), {
-        paddingTopLeft: [462, 30],
+        paddingTopLeft: [panelWidth, 30],
         paddingBottomRight: [30, 30],
         duration: 0.8,
       });

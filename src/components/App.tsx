@@ -160,8 +160,8 @@ export default function App() {
       </div>
 
       {/* UI flotante alineada a la izquierda */}
-      <div className="absolute inset-y-0 left-0 z-10 flex items-center justify-start p-4 sm:p-6 pointer-events-none">
-        <div className="pointer-events-auto w-full max-w-xs sm:max-w-sm">
+      <div className="absolute inset-y-0 left-0 z-10 flex items-center justify-start p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] sm:p-6 pointer-events-none">
+        <div className="pointer-events-auto w-full max-w-xs sm:max-w-sm max-h-[calc(100vh-2rem)] overflow-y-auto">
           {state === 'form' && (
             <div
               key="form"
@@ -219,10 +219,11 @@ export default function App() {
           {state === 'results' && routes.length > 0 && (
             <div
               key="results"
+              role="list"
               aria-live="polite"
-              className="flex flex-col gap-3 max-h-[calc(100vh-2rem)] animate-in fade-in slide-in-from-left-4 duration-500 fill-mode-both"
+              className="flex flex-col gap-3 animate-in fade-in slide-in-from-left-4 duration-500 fill-mode-both"
             >
-              <div className="glass-scroll overflow-y-auto p-1 -m-1">
+              <div className="glass-scroll scroll-fade-bottom overflow-y-auto p-1 -m-1">
                 <RouteCardList
                   routes={routes}
                   selectedIndex={selectedIdx}
@@ -242,7 +243,7 @@ export default function App() {
       </div>
 
       {/* Ajustes */}
-      <div className="absolute top-4 right-4 z-20 sm:top-6 sm:right-6">
+      <div className="absolute top-4 right-4 pt-[max(0rem,env(safe-area-inset-top))] sm:top-6 sm:right-6 z-20">
         <SettingsButton settings={settings} onChange={handleSettingsChange} />
       </div>
     </div>

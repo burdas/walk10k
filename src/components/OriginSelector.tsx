@@ -164,7 +164,7 @@ export default function OriginSelector({ onLocation, onRemoveAddress, recentAddr
                     e.stopPropagation();
                     onRemoveAddress(item.id);
                   }}
-                  className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded-full text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 transition-colors opacity-0 group-hover:opacity-100"
+                  className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded-full text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 transition-colors opacity-50 md:opacity-0 md:group-hover:opacity-100"
                   aria-label={`Eliminar ${item.primary}`}
                 >
                   ×

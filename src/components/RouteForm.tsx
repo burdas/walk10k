@@ -33,8 +33,8 @@ export default function RouteForm({ onSubmit, onSaveAddress, onRemoveAddress, on
   }
 
   return (
-    <div className="liquid-glass-strong rounded-2xl px-8 py-10 flex flex-col items-center gap-6 w-full">
-      <h1 className="text-3xl font-bold tracking-tight">Walk10K</h1>
+    <div className="liquid-glass-strong rounded-2xl px-4 py-6 sm:px-8 sm:py-10 flex flex-col items-center gap-6 w-full">
+      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Walk10K</h1>
       <StepSelector value={steps} onChange={setSteps} />
       <OriginSelector
         ref={originRef}
