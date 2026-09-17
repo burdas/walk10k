@@ -104,16 +104,6 @@ export default function StepSelector({ value, onChange, compact }: Props) {
             {opt.toLocaleString('es-ES')}
           </Button>
         ))}
-        <Button
-          variant={value > 0 && !STEP_OPTIONS.includes(value as (typeof STEP_OPTIONS)[number]) ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => {
-            setCustomValue(String(value));
-            setOpenCustom(true);
-          }}
-        >
-          Custom
-        </Button>
       </div>
     </div>
   );

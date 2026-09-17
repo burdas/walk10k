@@ -2,7 +2,7 @@ export const STEP_LENGTH_DEFAULT = 0.75;
 export const MIN_STEP_LENGTH_M = 0.4;
 export const MAX_STEP_LENGTH_M = 1.2;
 
-export const STEP_OPTIONS = [5000, 8000, 10000, 12000, 15000] as const;
+export const STEP_OPTIONS = [8000, 10000, 12000] as const;
 export type StepOption = (typeof STEP_OPTIONS)[number];
 
 export const TOLERANCE_RATIO = 0.20;

@@ -357,6 +357,14 @@
   background-clip: content-box;
 }
 
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
 @media (hover: none) {
   .liquid-glass-interactive {
     transform: none;
