@@ -243,7 +243,7 @@ export default function App() {
       </div>
 
       {/* Ajustes */}
-      <div className="absolute top-4 left-4 pt-[max(0rem,env(safe-area-inset-top))] sm:left-auto sm:right-4 sm:top-6 z-20">
+      <div className="absolute top-4 left-4 sm:left-auto sm:right-4 sm:top-6 z-20">
         <SettingsButton settings={settings} onChange={handleSettingsChange} />
       </div>
     </div>
