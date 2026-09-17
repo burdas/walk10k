@@ -98,12 +98,12 @@ async function fetchRoundTrip(
 
 function pickPoints(distanceM: number): number {
   if (distanceM < 3000) return 6;
-  if (distanceM < 8000) return 5;
+  if (distanceM < 10000) return 5;
   return 4;
 }
 
 function compensateLength(targetM: number): number {
-  return Math.round(targetM * 0.55);
+  return Math.round(targetM * 0.65);
 }
 
 async function mapWithConcurrency<T, R>(
