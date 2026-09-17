@@ -104,7 +104,13 @@ export default function RouteMap({ origin, routeGeometry, routeIndex, showRoute 
         opacity: 0.8,
       }).addTo(map);
       routeLayer.current = line;
-      map.flyToBounds(line.getBounds(), { padding: [30, 30], duration: 0.8 });
+
+      map.flyToBounds(line.getBounds(), {
+        paddingTopLeft: [462, 30],
+        paddingBottomRight: [30, 30],
+        duration: 0.8,
+      });
+
       animateRouteDraw(line);
     } else if (origin) {
       map.flyTo([origin.lat, origin.lon], FOCUS_ZOOM);
