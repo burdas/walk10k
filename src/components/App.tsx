@@ -159,13 +159,13 @@ export default function App() {
         />
       </div>
 
-      {/* UI flotante alineada a la izquierda */}
-      <div className="absolute inset-y-0 left-0 z-10 flex items-center justify-start p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] sm:p-6 pointer-events-none">
-        <div className="pointer-events-auto w-full max-w-xs sm:max-w-sm max-h-[calc(100vh-2rem)] overflow-y-auto">
+      {/* Bottom sheet en móvil, panel lateral en desktop */}
+      <div className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-center p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:inset-y-0 sm:bottom-auto sm:left-0 sm:right-auto sm:items-center sm:justify-start sm:p-6 pointer-events-none">
+        <div className="pointer-events-auto w-full max-w-xs sm:max-w-sm max-h-[50vh] sm:max-h-[calc(100vh-2rem)] overflow-y-auto">
           {state === 'form' && (
             <div
               key="form"
-              className="animate-in fade-in slide-in-from-left-4 zoom-in-95 duration-500 fill-mode-both"
+              className="animate-in fade-in slide-in-from-bottom-4 sm:slide-in-from-left-4 zoom-in-95 duration-500 fill-mode-both"
             >
               <RouteForm
                 onSubmit={handleFormReady}
@@ -221,7 +221,7 @@ export default function App() {
               key="results"
               role="list"
               aria-live="polite"
-              className="flex flex-col gap-3 animate-in fade-in slide-in-from-left-4 duration-500 fill-mode-both"
+              className="flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-4 sm:slide-in-from-left-4 duration-500 fill-mode-both"
             >
               <div className="glass-scroll scroll-fade-bottom overflow-y-auto p-1 -m-1">
                 <RouteCardList

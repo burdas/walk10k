@@ -105,10 +105,11 @@ export default function RouteMap({ origin, routeGeometry, routeIndex, showRoute 
       }).addTo(map);
       routeLayer.current = line;
 
-      const panelWidth = typeof window !== 'undefined' && window.innerWidth < 640 ? 40 : 462;
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+      const padding: [number, number] = isMobile ? [30, 40] : [462, 30];
       map.flyToBounds(line.getBounds(), {
-        paddingTopLeft: [panelWidth, 30],
-        paddingBottomRight: [30, 30],
+        paddingTopLeft: isMobile ? [30, 30] : padding,
+        paddingBottomRight: isMobile ? padding : [30, 30],
         duration: 0.8,
       });
 
