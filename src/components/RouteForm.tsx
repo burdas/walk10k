@@ -50,13 +50,14 @@ export default function RouteForm({ onSubmit, onSaveAddress, onRemoveAddress, on
         />
       </div>
 
-      {/* Móvil: chips + botón en fila */}
-      <div className="flex gap-2 items-center w-full sm:hidden">
+      {/* Móvil: chips + botón en columna */}
+      <div className="flex flex-col gap-2 w-full sm:hidden">
         <StepSelector value={steps} onChange={setSteps} compact />
         <Button
           onClick={handleSubmit}
           disabled={!origin}
-          className="shrink-0"
+          className="w-full"
+          size="lg"
         >
           GENERAR
         </Button>

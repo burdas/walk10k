@@ -161,7 +161,7 @@ export default function App() {
 
       {/* Bottom sheet en móvil, panel lateral en desktop */}
       <div className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-center p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:inset-y-0 sm:bottom-auto sm:left-0 sm:right-auto sm:items-center sm:justify-start sm:p-6 pointer-events-none">
-        <div className="pointer-events-auto w-full sm:max-w-sm max-h-[50vh] sm:max-h-[calc(100vh-2rem)] overflow-y-auto scrollbar-hidden">
+        <div className="pointer-events-auto w-full sm:max-w-sm max-h-[40vh] sm:max-h-[calc(100vh-2rem)] overflow-y-auto scrollbar-hidden">
           {state === 'form' && (
             <div
               key="form"

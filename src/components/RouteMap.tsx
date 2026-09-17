@@ -106,7 +106,7 @@ export default function RouteMap({ origin, routeGeometry, routeIndex, showRoute 
       routeLayer.current = line;
 
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-      const padding: [number, number] = isMobile ? [30, 40] : [462, 30];
+      const padding: [number, number] = isMobile ? [350, 30] : [462, 30];
       map.flyToBounds(line.getBounds(), {
         paddingTopLeft: isMobile ? [30, 30] : padding,
         paddingBottomRight: isMobile ? padding : [30, 30],
