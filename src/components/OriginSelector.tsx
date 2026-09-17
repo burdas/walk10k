@@ -150,13 +150,15 @@ export default function OriginSelector({ onLocation, onRemoveAddress, recentAddr
           {recentAddresses.map((item) => (
             <div
               key={item.id}
-              className="liquid-glass liquid-glass-interactive group relative w-full text-left px-4 py-3 rounded-xl cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="liquid-glass liquid-glass-interactive group w-full flex items-center text-left px-4 py-3 rounded-xl cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
               onClick={() => handleRecentClick(item)}
             >
-              <span className="block text-sm font-medium truncate pr-6">{item.primary}</span>
-              {item.secondary && (
-                <span className="block text-xs text-muted-foreground truncate pr-6">{item.secondary}</span>
-              )}
+              <div className="flex-1 min-w-0">
+                <span className="block text-sm font-medium truncate">{item.primary}</span>
+                {item.secondary && (
+                  <span className="block text-xs text-muted-foreground truncate">{item.secondary}</span>
+                )}
+              </div>
               {onRemoveAddress && (
                 <button
                   type="button"
@@ -164,7 +166,7 @@ export default function OriginSelector({ onLocation, onRemoveAddress, recentAddr
                     e.stopPropagation();
                     onRemoveAddress(item.id);
                   }}
-                  className="absolute top-1/2 right-2 w-8 h-8 -translate-y-1/2 flex items-center justify-center rounded-lg border-2 border-foreground/20 text-sm text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 cursor-pointer transition-colors opacity-50 md:opacity-0 md:group-hover:opacity-100"
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg border-2 border-foreground/20 text-base font-semibold text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 cursor-pointer transition-colors ml-2"
                   aria-label={`Eliminar ${item.primary}`}
                 >
                   ×

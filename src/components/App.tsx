@@ -161,7 +161,7 @@ export default function App() {
 
       {/* Bottom sheet en móvil, panel lateral en desktop */}
       <div className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-center p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:inset-y-0 sm:bottom-auto sm:left-0 sm:right-auto sm:items-center sm:justify-start sm:p-6 pointer-events-none">
-        <div className="pointer-events-auto w-full sm:max-w-sm max-h-[50vh] sm:max-h-[calc(100vh-2rem)] overflow-y-auto">
+        <div className="pointer-events-auto w-full sm:max-w-sm max-h-[50vh] sm:max-h-[calc(100vh-2rem)] overflow-y-auto scrollbar-hidden">
           {state === 'form' && (
             <div
               key="form"
@@ -223,7 +223,7 @@ export default function App() {
               aria-live="polite"
               className="flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-4 sm:slide-in-from-left-4 duration-500 fill-mode-both"
             >
-              <div className="scrollbar-hidden scroll-fade-bottom overflow-y-auto overflow-x-hidden p-1 -m-1">
+              <div className="space-y-2">
                 <RouteCardList
                   routes={routes}
                   selectedIndex={selectedIdx}
@@ -233,7 +233,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={handleBack}
-                className="liquid-glass liquid-glass-interactive cursor-pointer w-full px-4 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground"
+                className="cursor-pointer w-full px-4 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground border border-border/50 hover:bg-muted/50 transition-colors"
               >
                 Nueva búsqueda
               </button>
