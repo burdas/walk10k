@@ -166,7 +166,7 @@ export default function OriginSelector({ onLocation, onRemoveAddress, recentAddr
                     e.stopPropagation();
                     onRemoveAddress(item.id);
                   }}
-                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg border-2 border-foreground/20 text-base font-semibold text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 cursor-pointer transition-colors ml-2"
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg border border-foreground/20 text-base font-semibold text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 cursor-pointer transition-colors ml-2"
                   aria-label={`Eliminar ${item.primary}`}
                 >
                   ×
