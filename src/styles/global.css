@@ -476,6 +476,13 @@
     right: 1rem !important;
     bottom: auto !important;
   }
+  .settings-btn-wrapper {
+    position: fixed !important;
+    top: 1rem !important;
+    left: 1rem !important;
+    right: auto !important;
+    bottom: auto !important;
+  }
 }
 
 .leaflet-control-attribution {
