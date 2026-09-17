@@ -33,27 +33,47 @@ export default function RouteForm({ onSubmit, onSaveAddress, onRemoveAddress, on
   }
 
   return (
-    <div className="liquid-glass-strong rounded-2xl px-4 py-6 sm:px-8 sm:py-10 flex flex-col items-center gap-6 w-full">
+    <div className="liquid-glass-strong rounded-2xl px-4 py-6 sm:px-8 sm:py-10 flex flex-col items-center gap-3 sm:gap-6 w-full">
       <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Walk10K</h1>
-      <StepSelector value={steps} onChange={setSteps} />
-      <OriginSelector
-        ref={originRef}
-        recentAddresses={recentAddresses}
-        onRemoveAddress={onRemoveAddress}
-        onLocation={(lat, lon) => {
-          const nextOrigin = { lat, lon };
-          setOrigin(nextOrigin);
-          onOriginPreview(nextOrigin);
-        }}
-      />
-      <Button
-        onClick={handleSubmit}
-        disabled={!origin}
-        className="w-full"
-        size="lg"
-      >
-        GENERAR RUTAS
-      </Button>
+
+      {/* Búsqueda: ancho completo en ambos layouts */}
+      <div className="w-full">
+        <OriginSelector
+          ref={originRef}
+          recentAddresses={recentAddresses}
+          onRemoveAddress={onRemoveAddress}
+          onLocation={(lat, lon) => {
+            const nextOrigin = { lat, lon };
+            setOrigin(nextOrigin);
+            onOriginPreview(nextOrigin);
+          }}
+        />
+      </div>
+
+      {/* Móvil: chips + botón en fila */}
+      <div className="flex gap-2 items-center w-full sm:hidden">
+        <StepSelector value={steps} onChange={setSteps} compact />
+        <Button
+          onClick={handleSubmit}
+          disabled={!origin}
+          className="shrink-0"
+        >
+          GENERAR
+        </Button>
+      </div>
+
+      {/* Desktop: chips centrados + botón full width */}
+      <div className="hidden sm:flex sm:flex-col sm:items-center sm:gap-6 sm:w-full">
+        <StepSelector value={steps} onChange={setSteps} />
+        <Button
+          onClick={handleSubmit}
+          disabled={!origin}
+          className="w-full"
+          size="lg"
+        >
+          GENERAR RUTAS
+        </Button>
+      </div>
     </div>
   );
 }

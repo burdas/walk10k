@@ -4,9 +4,27 @@ import { STEP_OPTIONS } from '../lib/constants';
 interface Props {
   value: number;
   onChange: (steps: number) => void;
+  compact?: boolean;
 }
 
-export default function StepSelector({ value, onChange }: Props) {
+export default function StepSelector({ value, onChange, compact }: Props) {
+  if (compact) {
+    return (
+      <div className="flex flex-wrap justify-center gap-1.5">
+        {STEP_OPTIONS.map((opt) => (
+          <Button
+            key={opt}
+            variant={value === opt ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => onChange(opt)}
+          >
+            {opt.toLocaleString('es-ES')}
+          </Button>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center gap-3 w-full">
       <label className="text-xs text-muted-foreground">¿Cuántos pasos quieres dar?</label>
